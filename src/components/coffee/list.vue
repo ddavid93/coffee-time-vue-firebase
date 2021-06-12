@@ -156,7 +156,6 @@ export default {
             snapshotChange.forEach((doc) => {
               db.collection("users").doc(doc.data().userId).get()
                   .then(data => {
-                    console.log(data.data())
                     const user = data.data().name;
                     const paid = +doc.data().paid;
                     const drank = +doc.data().drank;
