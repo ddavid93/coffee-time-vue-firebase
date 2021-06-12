@@ -33,7 +33,7 @@ li label {
               </option>
             </select>
           </div>
-          <br />
+          <br/>
           <div class="form-group">
             <ul class="checkboxes">
               <li v-for="user in Users" :key="user.key">
@@ -92,13 +92,13 @@ li label {
 </template>
 
 <script>
-import { db } from "../../main";
+import {db} from "../../main";
 import VueElementLoading from "vue-element-loading";
 import * as _ from "lodash";
 import firebase from "firebase";
 
 export default {
-  components: { VueElementLoading },
+  components: {VueElementLoading},
   data() {
     return {
       CoffeeAccount: [],
@@ -130,13 +130,15 @@ export default {
                   .where("userId", "==", doc.id)
                   .get()
                   .then(data => {
-                    const coffeeAccount = data.docs[0].data();
-                    if (coffeeAccount.userId === doc.id) {
-                      this.Users.push({
-                        key: doc.id,
-                        name: doc.data().name,
-                        difference: coffeeAccount.paid - coffeeAccount.drank
-                      });
+                    if (data.docs[0]) {
+                      const coffeeAccount = data.docs[0].data();
+                      if (coffeeAccount.userId === doc.id) {
+                        this.Users.push({
+                          key: doc.id,
+                          name: doc.data().name,
+                          difference: coffeeAccount.paid - coffeeAccount.drank
+                        });
+                      }
                     }
                   });
             });
@@ -156,16 +158,18 @@ export default {
             snapshotChange.forEach((doc) => {
               db.collection("users").doc(doc.data().userId).get()
                   .then(data => {
-                    const user = data.data().name;
-                    const paid = +doc.data().paid;
-                    const drank = +doc.data().drank;
-                    this.CoffeeAccount.push({
-                      key: doc.id,
-                      user,
-                      paid,
-                      drank,
-                      difference: paid - drank
-                    });
+                    if (data.data()) {
+                      const user = data.data().name;
+                      const paid = +doc.data().paid;
+                      const drank = +doc.data().drank;
+                      this.CoffeeAccount.push({
+                        key: doc.id,
+                        user,
+                        paid,
+                        drank,
+                        difference: paid - drank
+                      });
+                    }
                   });
             });
             this.loadingCoffee = false;
