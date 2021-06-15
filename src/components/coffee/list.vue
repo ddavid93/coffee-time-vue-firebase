@@ -22,12 +22,10 @@ li label {
         <form @submit.prevent="buyCoffee">
           <div class="form-group">
             <label for="willPay">Select an user</label>
-            <select
-                id="willPay"
+            <select id="willPay"
                 class="form-control"
                 v-model="willPay"
-                required
-            >
+                required>
               <option v-for="user in usersOrdered(Users)" :key="user.key" :value="user.key">
                 {{ user.name }}
               </option>
@@ -76,7 +74,7 @@ li label {
               </tr>
               </thead>
               <tbody>
-              <tr v-for="coffees in CoffeeAccount" :key="coffees.key">
+              <tr v-for="(coffees, index) in CoffeeAccount" :key="index">
                 <td>{{ coffees.user }}</td>
                 <td>{{ coffees.paid }}</td>
                 <td>{{ coffees.drank }}</td>
@@ -123,37 +121,37 @@ export default {
     },
     getUsers() {
       this.loadingUsers = true;
-      db.collection("users").where("active", "==", true).onSnapshot(
-          (snapshotChange) => {
-            snapshotChange.forEach((doc) => {
-              db.collection("coffeeAccount")
-                  .where("userId", "==", doc.id)
-                  .get()
-                  .then(data => {
-                    if (data.docs[0]) {
-                      const coffeeAccount = data.docs[0].data();
-                      if (coffeeAccount.userId === doc.id) {
-                        this.Users.push({
-                          key: doc.id,
-                          name: doc.data().name,
-                          difference: coffeeAccount.paid - coffeeAccount.drank
-                        });
-                      }
-                    }
-                  });
-            });
-            this.loadingUsers = false;
-          },
-          () => {
-            this.loadingUsers = false;
-            this.error = true;
-          }
-      );
+      db.collection("users").where("active", "==", true)
+          .onSnapshot((snapshotChange) => {
+                snapshotChange.forEach((doc) => {
+                  db.collection("coffeeAccount")
+                      .where("userId", "==", doc.id)
+                      .get()
+                      .then(data => {
+                        if (data.docs[0]) {
+                          const coffeeAccount = data.docs[0].data();
+                          if (coffeeAccount.userId === doc.id) {
+                            this.Users.push({
+                              key: doc.id,
+                              name: doc.data().name,
+                              difference: coffeeAccount.paid - coffeeAccount.drank
+                            });
+                          }
+                        }
+                      });
+                });
+                this.loadingUsers = false;
+              },
+              () => {
+                this.loadingUsers = false;
+                this.error = true;
+              }
+          );
     },
     getCoffeeAccount() {
       this.loadingCoffee = true;
-      db.collection("coffeeAccount").onSnapshot(
-          (snapshotChange) => {
+      db.collection("coffeeAccount")
+          .onSnapshot((snapshotChange) => {
             this.CoffeeAccount = [];
             snapshotChange.forEach((doc) => {
               db.collection("users").doc(doc.data().userId).get()
@@ -225,7 +223,6 @@ export default {
                       willPay = doc.data().name;
                     }
                   });
-                  console.log('logs');
                   db.collection("coffeeLogs")
                       .add({
                         date: firebase.firestore.FieldValue.serverTimestamp(),

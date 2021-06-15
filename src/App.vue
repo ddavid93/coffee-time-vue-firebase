@@ -71,6 +71,12 @@ import {appAuth} from "./main";
 export default {
   computed: {
     authenticated() {
+      // db.collection("coffeeLogs").onSnapshot(
+      //     (snapshotChange) => {
+      //       snapshotChange.forEach((doc) => {
+      //         db.collection("coffeeLogs").doc(doc.id).delete()
+      //       });
+      //     });
       return !!this.user && this.user.loggedIn
     },
     firstName() {
@@ -82,7 +88,6 @@ export default {
   },
   mounted: function () {
     appAuth.onAuthStateChanged(user => {
-      console.log(user)
       if (user) {
         this.user.loggedIn = true;
         this.user.data = user;
