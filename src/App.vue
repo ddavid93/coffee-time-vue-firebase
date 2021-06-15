@@ -42,7 +42,7 @@ li {
                 >
               </li>
               <li class="nav-item pointer">
-                <a class="nav-link" @click.prevent="signOut">Sign out</a>
+                <a class="nav-link" @click.prevent="signOut">Logout</a>
               </li>
             </template>
             <template v-else>
@@ -71,12 +71,6 @@ import {appAuth} from "./main";
 export default {
   computed: {
     authenticated() {
-      // db.collection("coffeeLogs").onSnapshot(
-      //     (snapshotChange) => {
-      //       snapshotChange.forEach((doc) => {
-      //         db.collection("coffeeLogs").doc(doc.id).delete()
-      //       });
-      //     });
       return !!this.user && this.user.loggedIn
     },
     firstName() {
