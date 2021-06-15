@@ -7,7 +7,7 @@ li {
   <div>
     <nav class="navbar navbar-expand-md navbar navbar-dark bg-dark">
       <div class="container">
-        <router-link to="/" class="navbar-brand" v-if="!!user.data">Hello: {{ user.data.displayName }}</router-link>
+        <router-link to="/" class="navbar-brand" v-if="!!authenticated">Hello: {{ user.data.displayName }}</router-link>
         <button
             class="navbar-toggler"
             type="button"
@@ -42,7 +42,7 @@ li {
                 >
               </li>
               <li class="nav-item pointer">
-                <a class="nav-link" @click.prevent="signOut">Sign out</a>
+                <a class="nav-link" @click.prevent="signOut">Logout</a>
               </li>
             </template>
             <template v-else>
@@ -58,20 +58,46 @@ li {
       </div>
     </nav>
     <br>
-      <h4 class="text-center">Coffee Time Test for Yanovis</h4>
+    <h4 class="text-center">Coffee Time Test for Yanovis</h4>
     <div class="container mt-5">
       <router-view></router-view>
     </div>
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
 import firebase from "firebase";
+import {appAuth} from "./main";
+
 export default {
   computed: {
-    ...mapGetters({
-      user: "user"
+    authenticated() {
+      return !!this.user && this.user.loggedIn
+    },
+    firstName() {
+      if (this.user.data.displayName) {
+        return this.user.data.displayName.split(' ')[0]
+      }
+      return null
+    }
+  },
+  mounted: function () {
+    appAuth.onAuthStateChanged(user => {
+      if (user) {
+        this.user.loggedIn = true;
+        this.user.data = user;
+      } else {
+        this.user.loggedIn = false;
+        this.user.data = {};
+      }
     })
+  },
+  data() {
+    return {
+      user: {
+        loggedIn: false,
+        data: {}
+      }
+    }
   },
   methods: {
     signOut() {

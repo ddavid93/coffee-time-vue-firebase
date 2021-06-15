@@ -31,12 +31,12 @@
 </template>
 
 <script>
-import { db } from "../../main";
+import {db} from "../../main";
 import * as moment from "moment";
 import VueElementLoading from "vue-element-loading";
 
 export default {
-  components: { VueElementLoading },
+  components: {VueElementLoading},
   data() {
     return {
       loading: false,
@@ -51,7 +51,7 @@ export default {
           snapshotChange.forEach((doc) => {
             this.CoffeeLog.push({
               key: doc.id,
-              date: moment(doc.data().date.toDate()).format("YYYY-MM-DD"),
+              date: !!doc.data() && doc.data().date ? moment(doc.data().date.toDate()).format("YYYY-MM-DD") : null,
               paid: doc.data().paid,
               whom: doc.data().whom.join(", ")
             });

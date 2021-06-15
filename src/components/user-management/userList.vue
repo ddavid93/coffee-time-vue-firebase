@@ -28,13 +28,13 @@
                   <td>{{ user.name }}</td>
                   <td>
                     <input
-                        type="checkbox"
+                        type="checkbox"  v-if="user.name !== 'guestUser'"
                         @change.prevent="activateDeactivateUser(user)"
                         v-model="user.active"
                     />
                   </td>
                   <td>
-                    <button
+                    <button v-if="user.name !== 'guestUser'"
                         @click.prevent="deleteUser(user.key)"
                         class="btn btn-danger"
                     >
